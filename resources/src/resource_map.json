@@ -1,6 +1,11 @@
 {
     "media": [
         {
+            "defName": "IMAGE_MENU_ICON",
+            "type": "png",
+            "file": "images/menu_icon.png"
+        },
+        {
             "defName": "UI_TOP",
             "type": "png",
             "file": "images/ui_top.png"

@@ -9,7 +9,7 @@
 PBL_APP_INFO(MY_UUID,
              "Pokedex App", "Peter-Berweiler.de",
              1, 0, /* App version */
-             DEFAULT_MENU_ICON,
+             RESOURCE_ID_IMAGE_MENU_ICON,
              APP_INFO_STANDARD_APP);
 
 
@@ -20,13 +20,17 @@ BmpContainer image_container;
 BmpContainer image_top;
 BmpContainer image_bottom;
 int currentID;
-
+int mode; // 1 type, 2 data 
 
 void update_selection() {
 	if (currentID < 1){    currentID = 1;   }
 	if (currentID > 152){  currentID = 152; }
 	
-	text_layer_set_text(&textLayer, poke_names[currentID-1]);
+	if (mode == 1){ // 1 type, 2 data
+		text_layer_set_text(&textLayer, poke_names[currentID-1]);
+	}else{
+		text_layer_set_text(&textLayer, poke_info[currentID-1]);
+	}
 	
 	layer_remove_from_parent(&image_container.layer.layer);
 	bmp_deinit_container(&image_container);
@@ -40,34 +44,41 @@ void update_selection() {
 ///////////////////////// INPUT /////////////////////
 
 void up_single_click_handler(ClickRecognizerRef recognizer, Window *window) {
-  (void)recognizer;
-  (void)window;
+  (void)recognizer; (void)window;
 	
 	currentID = currentID -1;
 	update_selection();
 }
 
 void down_single_click_handler(ClickRecognizerRef recognizer, Window *window) {
-  (void)recognizer;
-  (void)window;
+  (void)recognizer; (void)window;
 	
 	currentID = currentID +1;
 	update_selection();
 }
 
 void up_long_click_handler(ClickRecognizerRef recognizer, Window *window) {
-  (void)recognizer;
-  (void)window;
+  (void)recognizer; (void)window;
 	
 	currentID = currentID -15;
 	update_selection();
 }
 
 void down_long_click_handler(ClickRecognizerRef recognizer, Window *window) {
-  (void)recognizer;
-  (void)window;
+  (void)recognizer; (void)window;
 	
 	currentID = currentID +15;
+	update_selection();
+}
+
+void select_single_click_handler(ClickRecognizerRef recognizer, Window *window) {
+  (void)recognizer; (void)window;
+	
+	if (mode == 1){ // 1 type, 2 data
+		mode = 2;
+	}else{
+		mode = 1;
+	}
 	update_selection();
 }
 
@@ -79,6 +90,8 @@ void click_config_provider(ClickConfig **config, Window *window) {
 	
 	config[BUTTON_ID_DOWN]->click.handler      = (ClickHandler) down_single_click_handler;
 	config[BUTTON_ID_DOWN]->long_click.handler = (ClickHandler) down_long_click_handler;
+	
+	config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) select_single_click_handler;
 }
 
 
