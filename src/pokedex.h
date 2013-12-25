@@ -310,7 +310,7 @@ static char * poke_info[] = {
 "#?&0######\n\nMissingNo\n\n???  m\n??? kg",
 NULL};
 
-static uint8_t poke_images[] = { \
+static int poke_images[] = { \
 RESOURCE_ID_IMAGE_poke1,\
 RESOURCE_ID_IMAGE_poke2,\
 RESOURCE_ID_IMAGE_poke3,\
