@@ -5,13 +5,13 @@
 Window      *window;
 TextLayer   *text_layer;
 
-/*GBitmap     *poke_image;
+GBitmap     *poke_image;
 BitmapLayer *poke_image_layer;
 
 GBitmap     *top_bar_image;
 BitmapLayer *top_bar_layer;
 GBitmap     *bottom_bar_image;
-BitmapLayer *bottom_bar_layer;*/
+BitmapLayer *bottom_bar_layer;
 
 GFont       *custom_font;
 
@@ -24,24 +24,14 @@ void update_selection() {
 	
 	if (mode == 1){ // 1 type, 2 data
 		text_layer_set_text( text_layer, poke_names[currentID-1]);
-		//gbitmap_destroy( poke_image );
-		//poke_image = gbitmap_create_with_resource( poke_images[currentID-1] );
 	}else{
 		text_layer_set_text( text_layer, poke_info[currentID-1]);
-
 	}
 	
-	//layer_remove_from_parent(&image_container.layer.layer);
-	//bmp_deinit_container(&image_container);
-	
-	//gbitmap_destroy( poke_image );
-	//poke_image = gbitmap_create_with_resource( poke_images[currentID-1] );
-	//bitmap_layer_set_bitmap( poke_image_layer, poke_image);
-	
-	//bmp_init_container(poke_images[currentID-1], &image_container);
-	//layer_set_frame(&image_container.layer.layer, GRect(/*43*/ 70, 10, 58, 58));
-	//layer_add_child(&window.layer, &image_container.layer.layer);
-	
+	gbitmap_destroy( poke_image );
+	poke_image = gbitmap_create_with_resource( poke_images[currentID-1] );
+	bitmap_layer_set_bitmap( poke_image_layer, poke_image);
+
 }
 
 ///////////////////////// INPUT /////////////////////
@@ -80,18 +70,6 @@ void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
 	update_selection();
 }
 
-/*void click_config_provider(ClickConfig **config, Window *window) {
-  (void)window;
-
-	config[BUTTON_ID_UP]->click.handler      = (ClickHandler) up_single_click_handler;
-	config[BUTTON_ID_UP]->long_click.handler = (ClickHandler) up_long_click_handler;
-	
-	config[BUTTON_ID_DOWN]->click.handler      = (ClickHandler) down_single_click_handler;
-	config[BUTTON_ID_DOWN]->long_click.handler = (ClickHandler) down_long_click_handler;
-	
-	config[BUTTON_ID_SELECT]->click.handler = (ClickHandler) select_single_click_handler;
-}*/
-
 void click_config_provider(void *context) {
 	window_single_click_subscribe(BUTTON_ID_SELECT, select_single_click_handler);
 	
@@ -115,9 +93,10 @@ void handle_init(void) {
 	window_set_click_config_provider( window, click_config_provider );
 	
 	/*******  TEXT LAYER ********/
-	custom_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PKMN_14));
+	
 	text_layer = text_layer_create( GRect(4, 44, 140 /* width */, 98 /* height */));
 	
+	custom_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_PKMN_14));
 	text_layer_set_font( text_layer, custom_font);
 	text_layer_set_text_color( text_layer, GColorBlack);
 	text_layer_set_overflow_mode( text_layer, GTextOverflowModeWordWrap);
@@ -127,7 +106,7 @@ void handle_init(void) {
 	layer_add_child( window_layer, text_layer_get_layer( text_layer ));
 
 		
-	/*******  IMAGE ********
+	/////// IMAGE ////////////
 	poke_image       = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_poke1);
 	poke_image_layer = bitmap_layer_create( GRect( 70, 10, 58, 58) );
 	bitmap_layer_set_alignment( poke_image_layer, GAlignCenter);
@@ -147,7 +126,7 @@ void handle_init(void) {
 	bottom_bar_layer = bitmap_layer_create( GRect( 0, 168-11-16, 144, 11) );
 	bitmap_layer_set_bitmap( bottom_bar_layer, bottom_bar_image);
 	layer_add_child( window_layer, bitmap_layer_get_layer( bottom_bar_layer ));
-*/
+
 	
 	
 	update_selection();
@@ -159,7 +138,7 @@ void handle_init(void) {
 ///////////////////////// DE INIT /////////////////////
 
 void handle_deinit(void) {
-	/*bitmap_layer_destroy( poke_image_layer );
+	bitmap_layer_destroy( poke_image_layer );
 	bitmap_layer_destroy( top_bar_layer );
 	bitmap_layer_destroy( bottom_bar_layer );
 	
@@ -167,7 +146,7 @@ void handle_deinit(void) {
 	gbitmap_destroy( poke_image );
 	gbitmap_destroy( top_bar_image );
 	gbitmap_destroy( bottom_bar_image );
-	*/
+	
 	text_layer_destroy( text_layer );
 
 	window_destroy( window );
