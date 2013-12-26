@@ -1,5 +1,6 @@
 
 #include <pebble.h>
+	
 #include "pokedex.h"
 
 Window      *window;
@@ -17,12 +18,16 @@ GFont       *custom_font;
 
 int currentID;
 int mode; // 1 type, 2 data 
+#define MODE_TYPE 1
+#define MODE_DATA 2
+
+static long seed;
 
 void update_selection() {
 	if (currentID < 1){    currentID = 1;   }
-	if (currentID > 152){  currentID = 152; }
+	if (currentID > NUM_POKEMON){  currentID = NUM_POKEMON; }
 	
-	if (mode == 1){ // 1 type, 2 data
+	if (mode == MODE_TYPE){ // 1 type, 2 data
 		text_layer_set_text( text_layer, poke_names[currentID-1]);
 	}else{
 		text_layer_set_text( text_layer, poke_info[currentID-1]);
@@ -34,57 +39,68 @@ void update_selection() {
 
 }
 
+int random(int max) // returns 1 ... max
+{
+	seed = (((seed * 214013L + 2531011L) >> 16) & 32767);
+	return ((seed % max) + 1);
+}
+
 ///////////////////////// INPUT /////////////////////
 
-void up_single_click_handler(ClickRecognizerRef recognizer, void *context) {
+void up_click_handler(ClickRecognizerRef recognizer, void *context) 
+{
+	if (click_number_of_clicks_counted( recognizer ) >= 4)
+		currentID = currentID -10;
+	else if (click_number_of_clicks_counted( recognizer ) == 1)
+		currentID = currentID -1;
 	
-	currentID = currentID -1;
 	update_selection();
 }
 
-void down_single_click_handler(ClickRecognizerRef recognizer, void *context) {
-	
-	currentID = currentID +1;
+void down_click_handler(ClickRecognizerRef recognizer, void *context) 
+{
+	if (click_number_of_clicks_counted( recognizer ) >= 4)
+		currentID = currentID +10;
+	else if (click_number_of_clicks_counted( recognizer ) == 1)
+		currentID = currentID +1;
+
 	update_selection();
 }
 
-void up_long_click_handler(ClickRecognizerRef recognizer, void *context) {
-	
-	currentID = currentID -15;
-	update_selection();
-}
-
-void down_long_click_handler(ClickRecognizerRef recognizer, void *context) {
-	
-	currentID = currentID +15;
-	update_selection();
-}
-
-void select_single_click_handler(ClickRecognizerRef recognizer, void *context) {
-	
-	if (mode == 1){ // 1 type, 2 data
-		mode = 2;
-	}else{
-		mode = 1;
+void select_click_handler(ClickRecognizerRef recognizer, void *context) 
+{	
+	if (click_number_of_clicks_counted( recognizer ) <= 2)
+	{
+		if (mode == MODE_TYPE)
+			mode = MODE_DATA;
+		else
+			mode = MODE_TYPE;
 	}
+	
+	if (click_number_of_clicks_counted( recognizer ) >= 2)
+	{
+		currentID = random( NUM_POKEMON );	
+	}
+	
 	update_selection();
 }
+
 
 void click_config_provider(void *context) {
-	window_single_click_subscribe(BUTTON_ID_SELECT, select_single_click_handler);
+
 	
-	window_single_click_subscribe(BUTTON_ID_UP,  up_single_click_handler);
-	window_long_click_subscribe(BUTTON_ID_UP, 0, up_long_click_handler, NULL);
-	
-	window_single_click_subscribe(BUTTON_ID_DOWN,  down_single_click_handler);
-	window_long_click_subscribe(BUTTON_ID_DOWN, 0, down_long_click_handler, NULL);
+	window_single_repeating_click_subscribe(BUTTON_ID_SELECT, 500, select_click_handler);
+	window_single_repeating_click_subscribe(BUTTON_ID_UP,     300,     up_click_handler);
+	window_single_repeating_click_subscribe(BUTTON_ID_DOWN,   300,   down_click_handler);
 }
 
 ///////////////////////// INIT /////////////////////
 void handle_init(void) {
 	
-	currentID = 9;
-	mode = 1;
+	seed = time( NULL );
+	currentID = random( NUM_POKEMON ); //Random ID between 1 and 152
+	
+	mode = MODE_TYPE; //Type Mode
 	
 	window = window_create();
 	window_set_background_color( window, GColorWhite);

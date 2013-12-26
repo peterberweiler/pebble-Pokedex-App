@@ -1,3 +1,12 @@
+/*
+	This File Contains all the Pokemon Information
+	Kanto Pokedex
+	001      ...    152
+	Bulbasaur		MissingNo
+
+*/
+
+#define NUM_POKEMON 152
 
 static char * poke_names[] = {
 " 001      \n\nBulbasaur\n\nGrass\nPoison",
@@ -28,10 +37,10 @@ static char * poke_names[] = {
 " 026      \n\nRaichu\n\nElectric\n",
 " 027      \n\nSandshrew\n\nGround\n",
 " 028      \n\nSandslash\n\nGround\n",
-" 029      \n\nNidoran?\n\nPoison\n",
+" 029      \n\nNidoran w\n\nPoison\n",
 " 030      \n\nNidorina\n\nPoison\n",
 " 031      \n\nNidoqueen\n\nPoison\nGround",
-" 032      \n\nNidoran?\n\nPoison\n",
+" 032      \n\nNidoran m\n\nPoison\n",
 " 033      \n\nNidorino\n\nPoison\n",
 " 034      \n\nNidoking\n\nPoison\nGround",
 " 035      \n\nClefairy\n\nNormal\n",
@@ -464,5 +473,4 @@ RESOURCE_ID_IMAGE_poke149,
 RESOURCE_ID_IMAGE_poke150,
 RESOURCE_ID_IMAGE_poke151,
 RESOURCE_ID_IMAGE_poke152
-
 };
